@@ -25,7 +25,7 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.0.3'
-
+    implementation 'mysql:mysql-connector-java:8.0.29'
 }
 
 tasks.named('bootBuildImage') {
