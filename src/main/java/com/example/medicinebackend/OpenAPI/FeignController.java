@@ -1,5 +1,6 @@
 package com.example.medicinebackend.OpenAPI;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,4 +17,11 @@ public class FeignController {
             @RequestParam("perPage") int perPage) {
         return openFeignService.getMedicineData(page, perPage);
     }
+    @GetMapping("/search")
+    public List<MedicineData> getMedicineDataByName(
+            @RequestParam("productName") String productName) {
+        return openFeignService.getMedicineDataByName(productName);
+    }
+
+
 }
