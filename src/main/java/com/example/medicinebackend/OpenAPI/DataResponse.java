@@ -27,7 +27,7 @@ class MedicineData {
     @JsonProperty("고시일자")
     private String noticeDate;
     @JsonProperty("금기등급")
-    private String prohibitionGrade;
+    private String tabooLevel;
     @JsonProperty("급여")
     private String benefit;
     @JsonProperty("상세정보")
