@@ -1,6 +1,7 @@
 package com.example.medicinebackend.OpenAPI;
 
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class OpenFeignService {
                     .filter(data -> data.getProductName().contains(productName)) // 제품명이 파라미터와 일치하는 데이터 필터링
                     .collect(Collectors.toList()); // 결과를 리스트로 수집
         }
-        return List.of(); // 빈 리스트 반환
+        return Collections.emptyList();// 빈 리스트 반환
     }
 }
 
