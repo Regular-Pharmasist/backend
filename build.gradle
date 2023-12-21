@@ -26,6 +26,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.0.3'
     implementation 'mysql:mysql-connector-java:8.0.29'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+    implementation 'io.github.openfeign:feign-jackson:11.7'
 }
 
 tasks.named('bootBuildImage') {
