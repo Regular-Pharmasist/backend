@@ -5,12 +5,11 @@ import static java.util.Collections.emptyList;
 
 import com.example.medicinebackend.OpenAPI.Client.GeneralMedicineClient;
 import com.example.medicinebackend.OpenAPI.Client.OpenFeignClient;
-import com.example.medicinebackend.OpenAPI.Response.DataResponse;
-import com.example.medicinebackend.OpenAPI.Response.DrugsDataResponse;
 import com.example.medicinebackend.OpenAPI.Response.GeneralMedicineResponse;
+import com.example.medicinebackend.OpenAPI.Response.RiskDataResponse.Item;
+import com.example.medicinebackend.OpenAPI.Response.RiskDataResponse.RiskDataResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,16 +29,13 @@ public class OpenFeignService {
 
 
     public Object getMedicineDataByName(String productName) {
-        List<DataResponse.Body.ItemWrapper.Item> riskData = getRiskMedicineDataByName(productName);
+        List<Item> riskData = getRiskMedicineDataByName(productName);
         log.info("responseData : {}", riskData);
-        List<DrugsDataResponse.Item> drugData = getDrugMedicineDataByName(productName);
-        if (riskData.isEmpty() && drugData.isEmpty()) {
+        if (riskData.isEmpty()) {
             List<GeneralMedicineResponse.Item> generalMedicineData = getGeneralMedicineData(productName);// 모든 데이터 가져오기
             return generalMedicineData;
-        } else if (!riskData.isEmpty() && drugData.isEmpty()) {
+        } else if (!riskData.isEmpty()) {
             return riskData;
-        } else if (riskData.isEmpty() && !drugData.isEmpty()) {
-            return drugData;
         }
         return emptyList();// 빈 리스트 반환
 
@@ -59,44 +55,36 @@ public class OpenFeignService {
         return emptyList();
     }
 
-    public List<DrugsDataResponse.Item> getDrugMedicineDataByName(String productName) {
-        DrugsDataResponse response = generalMedicineClient.getDrugsMedicineData(serviceKey, 1000, 0, "json");
-        if (response != null && response.getBody().getItems() != null) {
-            List<DrugsDataResponse.Item> items = response.getBody().getItems();
-            if (items != null) {
-                return items.stream()
-                        .filter(item -> item.getDrugName().contains(productName))
-                        .toList();
-            }
-        }
-        return emptyList();
-    }
 
-
-
-    public List<DataResponse.Body.ItemWrapper.Item> getRiskMedicineDataByName(String productName) {
-        List<DataResponse.Body.ItemWrapper.Item> combinedRiskData = new ArrayList<>();
+    public List<Item> getRiskMedicineDataByName(String productName) {
+        List<Item> combinedRiskData = new ArrayList<>();
+        // 생각해보기 -> 자주 찾는 약물 생각해보기
 
         // 임부 주의 약물 데이터 조회
-        DataResponse pregnantData = feignClient.getPregnantMedicineData(serviceKey, 0, 1000,"json");
-        log.info("responseData : {}", pregnantData);
-        if (pregnantData != null && pregnantData.getBody() != null && pregnantData.getBody().getItems() != null) {
-            DataResponse.Body.ItemWrapper.Item item = pregnantData.getBody().getItems().getItem();
-            if (item != null && item.getItemName() != null && item.getItemName().contains(productName)) {
-                combinedRiskData.add(item);
-            }
-        }
-        log.info("responseData : {}", combinedRiskData);
+        RiskDataResponse pregnantData = feignClient.getPregnantMedicineData(serviceKey, "json");
+        filterItemsByProductName(pregnantData, productName, combinedRiskData);
 
         // 노인 주의 약물 데이터 조회
-        DataResponse elderlyData = feignClient.getElderlyMedicineData(serviceKey, 0, 1000,"json");
-        if (elderlyData != null && elderlyData.getBody() != null && elderlyData.getBody().getItems() != null) {
-            DataResponse.Body.ItemWrapper.Item item = elderlyData.getBody().getItems().getItem();
-            if (item != null && item.getItemName() != null && item.getItemName().contains(productName)) {
-                combinedRiskData.add(item);
-            }
-        }
+        RiskDataResponse elderlyData = feignClient.getElderlyMedicineData(serviceKey, "json");
+        filterItemsByProductName(elderlyData, productName, combinedRiskData);
+
+        //마약류 주의 데이터 조회
+        RiskDataResponse drugsData = feignClient.getDrugsMedicineData(serviceKey, "json");
+        filterItemsByProductName(elderlyData, productName, combinedRiskData);
+
         return combinedRiskData;
     }
+
+    public void filterItemsByProductName(RiskDataResponse subjectData, String productName, List<Item> combinedRiskData) {
+        if (subjectData != null && subjectData.getBody() != null && subjectData.getBody().getItems() != null) {
+            List<Item> items = subjectData.getBody().getItems();
+            for (Item item : items) {
+                if (item != null && item.getItemName().contains(productName)) {
+                    combinedRiskData.add(item);
+                }
+            }
+        }
+    }
+
 }
 

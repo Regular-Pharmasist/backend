@@ -2,6 +2,7 @@ package com.example.medicinebackend.OpenAPI.Configuration;
 
 import feign.Logger;
 import feign.codec.Decoder;
+import feign.codec.StringDecoder;
 import feign.jackson.JacksonDecoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,4 +18,9 @@ public class FeignConfiguration {
     public Decoder feignDecoder() {
         return new JacksonDecoder();
     }
+
+//    @Bean
+//    public Decoder feignDecoder() {
+//        return new StringDecoder();
+//    }
 }
