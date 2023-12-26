@@ -2,7 +2,11 @@ package com.example.medicinebackend.OpenAPI.Response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 public class GeneralMedicineResponse {
 
     private Header header;
@@ -10,6 +14,7 @@ public class GeneralMedicineResponse {
 
     // Getters and setters...
 
+    @Data
     public static class Header {
         private String resultCode;
         private String resultMsg;
@@ -17,10 +22,9 @@ public class GeneralMedicineResponse {
         // Getters and setters...
 
     }
-    public Body getBody() {
-        return body;
-    }
 
+    @Data
+    @NoArgsConstructor
     public static class Body {
         private int pageNo;
         private int totalCount;
@@ -32,6 +36,8 @@ public class GeneralMedicineResponse {
         }
     }
 
+    @Data
+    @NoArgsConstructor
     public static class Item {
         @JsonProperty("entpName")
         private String entpName;

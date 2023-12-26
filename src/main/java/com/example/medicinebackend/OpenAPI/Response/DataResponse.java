@@ -4,56 +4,114 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import java.util.List;
 import lombok.ToString;
 
-@Getter
+@Data
 @NoArgsConstructor
-@ToString
 public class DataResponse {
-    private int page;
-    private int perPage;
-    private int totalCount;
-    private int currentCount;
-    private int matchCount;
+    private Header header;
+    private Body body;
 
-    @JsonProperty("data")
-    private List<MedicineData> data;
+    @Data
+    @NoArgsConstructor
+    public static class Header {
+        @JsonProperty("resultCode")
+        private String resultCode;
+
+        @JsonProperty("resultMsg")
+        private String resultMsg;
+    }
 
     @Getter
     @NoArgsConstructor
     @ToString
-    public static class MedicineData {
-        @JsonProperty("성분명")
-        private String ingredientName;
+    public static class Body {
+        @JsonProperty("numOfRows")
+        private int numOfRows;
 
-        @JsonProperty("성분코드")
-        private String ingredientCode;
+        @JsonProperty("pageNo")
+        private int pageNo;
 
-        @JsonProperty("의약품코드")
-        private int medicineCode;
+        @JsonProperty("totalCount")
+        private int totalCount;
 
-        @JsonProperty("의약품명")
-        private String medicineName;
+        @JsonProperty("items")
+        private ItemWrapper items;
 
-        @JsonProperty("업체명")
-        private String companyName;
+        @Getter
+        @NoArgsConstructor
+        @ToString
+        public static class ItemWrapper {
+            @JsonProperty("item")
+            private Item item;
 
-        @JsonProperty("관리번호")
-        private int managementNumber;
+            @Getter
+            @NoArgsConstructor
+            @ToString
+            public static class Item {
+                @JsonProperty("TYPE_NAME")
+                private String typeName;
 
-        @JsonProperty("관리일자")
-        private String managementDate;
+                @JsonProperty("MIX_TYPE")
+                private String mixType;
 
-        @JsonProperty("비고")
-        private String remarks;
+                @JsonProperty("INGR_CODE")
+                private String ingrCode;
 
-        @JsonProperty("버전정보")
-        private int versionInfo;
+                @JsonProperty("INGR_ENG_NAME")
+                private String ingrEngName;
 
-        @JsonProperty("급여여부")
-        private String paymentStatus;
+                @JsonProperty("INGR_NAME")
+                private String ingrName;
 
+                @JsonProperty("MIX_INGR")
+                private String mixIngr;
+
+                @JsonProperty("FORM_NAME")
+                private String formName;
+
+                @JsonProperty("ITEM_SEQ")
+                private String itemSeq;
+
+                @JsonProperty("ITEM_NAME")
+                private String itemName;
+
+                @JsonProperty("ITEM_PERMIT_DATE")
+                private String itemPermitDate;
+
+                @JsonProperty("ENTP_NAME")
+                private String entpName;
+
+                @JsonProperty("CHART")
+                private String chart;
+
+                @JsonProperty("CLASS_CODE")
+                private String classCode;
+
+                @JsonProperty("CLASS_NAME")
+                private String className;
+
+                @JsonProperty("ETC_OTC_NAME")
+                private String etcOtcName;
+
+                @JsonProperty("MAIN_INGR")
+                private String mainIngr;
+
+                @JsonProperty("NOTIFICATION_DATE")
+                private String notificationDate;
+
+                @JsonProperty("PROHBT_CONTENT")
+                private String prohbtContent;
+
+                @JsonProperty("REMARK")
+                private String remark;
+
+                @JsonProperty("INGR_ENG_NAME_FULL")
+                private String ingrEngNameFull;
+
+                @JsonProperty("CHANGE_DATE")
+                private String changeDate;
+            }
+        }
     }
 }
