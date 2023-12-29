@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class OpenFeignService {
     private final OpenFeignClient feignClient;
-    private final GeneralMedicineClient generalMedicineClient;
 
     @Value("${api.serviceKey}")
     private String serviceKey;
@@ -43,7 +42,7 @@ public class OpenFeignService {
 
     public List<GeneralMedicineResponse.Item> getGeneralMedicineData(String productName) {
         //1000페이지까지 봤는데 없을 경우 어케 할지 -> 다음 페이교ㅎ=
-        GeneralMedicineResponse response = generalMedicineClient.getMedicineData(serviceKey, 0, 1000, "json");
+        GeneralMedicineResponse response = feignClient.getMedicineData(serviceKey, "json");
         if (response != null && response.getBody() != null) {
             List<GeneralMedicineResponse.Item> items = response.getBody().getItems();
             if (items != null) {
