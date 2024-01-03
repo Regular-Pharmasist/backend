@@ -1,4 +1,4 @@
-package com.example.medicinebackend.OpenAPI.Configuration;
+package com.example.medicinebackend.Configuration;
 
 import feign.Logger;
 import feign.codec.Decoder;

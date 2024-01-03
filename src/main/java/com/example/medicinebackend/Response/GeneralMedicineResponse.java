@@ -1,4 +1,4 @@
-package com.example.medicinebackend.OpenAPI.Response;
+package com.example.medicinebackend.Response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
