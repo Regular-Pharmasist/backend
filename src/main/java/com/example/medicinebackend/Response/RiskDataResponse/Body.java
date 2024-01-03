@@ -1,4 +1,4 @@
-package com.example.medicinebackend.OpenAPI.Response.RiskDataResponse;
+package com.example.medicinebackend.Response.RiskDataResponse;
 
 
 import java.util.List;

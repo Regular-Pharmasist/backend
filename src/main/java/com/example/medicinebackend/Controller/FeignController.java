@@ -1,5 +1,6 @@
-package com.example.medicinebackend.OpenAPI;
+package com.example.medicinebackend.Controller;
 
+import com.example.medicinebackend.Service.OpenFeignService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
