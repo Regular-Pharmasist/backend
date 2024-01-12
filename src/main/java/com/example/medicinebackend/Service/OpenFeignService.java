@@ -1,13 +1,12 @@
-package com.example.medicinebackend.OpenAPI;
+package com.example.medicinebackend.Service;
 
 
 import static java.util.Collections.emptyList;
 
-import com.example.medicinebackend.OpenAPI.Client.GeneralMedicineClient;
-import com.example.medicinebackend.OpenAPI.Client.OpenFeignClient;
-import com.example.medicinebackend.OpenAPI.Response.GeneralMedicineResponse;
-import com.example.medicinebackend.OpenAPI.Response.RiskDataResponse.Item;
-import com.example.medicinebackend.OpenAPI.Response.RiskDataResponse.RiskDataResponse;
+import com.example.medicinebackend.Client.OpenFeignClient;
+import com.example.medicinebackend.Response.GeneralMedicineResponse;
+import com.example.medicinebackend.Response.RiskDataResponse.Item;
+import com.example.medicinebackend.Response.RiskDataResponse.RiskDataResponse;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

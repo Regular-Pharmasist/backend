@@ -1,4 +1,4 @@
-package com.example.medicinebackend.OpenAPI.Response.RiskDataResponse;
+package com.example.medicinebackend.Response.RiskDataResponse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

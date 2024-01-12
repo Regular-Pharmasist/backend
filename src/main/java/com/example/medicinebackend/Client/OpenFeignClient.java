@@ -1,8 +1,8 @@
-package com.example.medicinebackend.OpenAPI.Client;
+package com.example.medicinebackend.Client;
 
-import com.example.medicinebackend.OpenAPI.Configuration.FeignConfiguration;
-import com.example.medicinebackend.OpenAPI.Response.GeneralMedicineResponse;
-import com.example.medicinebackend.OpenAPI.Response.RiskDataResponse.RiskDataResponse;
+import com.example.medicinebackend.Configuration.FeignConfiguration;
+import com.example.medicinebackend.Response.GeneralMedicineResponse;
+import com.example.medicinebackend.Response.RiskDataResponse.RiskDataResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
