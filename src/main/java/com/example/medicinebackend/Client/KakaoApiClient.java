@@ -1,4 +1,4 @@
-package com.example.medicinebackend.FeignClient;
+package com.example.medicinebackend.Client;
 
 import com.example.medicinebackend.Params.OAuthLoginParams;
 import com.example.medicinebackend.Response.KakaoInfoResponse;
@@ -66,9 +66,6 @@ public class KakaoApiClient implements OAuthApiClient {
         });
 
         KakaoTokens response = restTemplate.postForObject(url, request, KakaoTokens.class);
-        log.info("Requesting token from: {}", url);
-        log.info("\nRequest headers: {}", httpHeaders);
-        log.info("\nRequest body: {}", body);
         if (response != null) {
             log.info("Kakao API Access Token: {}", response.getAccessToken());
             return response.getAccessToken();
@@ -76,8 +73,7 @@ public class KakaoApiClient implements OAuthApiClient {
             log.error("Failed to obtain access token from Kakao API");
             return null;
         }
-//        assert response != null;
-//        return response.getAccessToken();
+
     }
 
     @Override

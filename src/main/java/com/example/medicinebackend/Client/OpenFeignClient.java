@@ -1,4 +1,4 @@
-package com.example.medicinebackend.FeignClient;
+package com.example.medicinebackend.Client;
 
 import com.example.medicinebackend.Configuration.FeignConfiguration;
 import com.example.medicinebackend.Response.GeneralMedicineResponse;

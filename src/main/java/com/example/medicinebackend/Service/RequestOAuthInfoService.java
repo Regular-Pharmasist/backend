@@ -1,6 +1,6 @@
 package com.example.medicinebackend.Service;
 
-import com.example.medicinebackend.FeignClient.OAuthApiClient;
+import com.example.medicinebackend.Client.OAuthApiClient;
 import com.example.medicinebackend.Params.OAuthLoginParams;
 import com.example.medicinebackend.Response.OAuthInfoResponse;
 import org.springframework.stereotype.Component;

@@ -1,11 +1,7 @@
 package com.example.medicinebackend.JWT;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import java.util.Base64;
-import javax.crypto.SecretKey;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 
 public class SecretKeyMaker {

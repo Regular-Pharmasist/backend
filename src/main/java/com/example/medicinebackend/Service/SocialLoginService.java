@@ -21,8 +21,7 @@ public class SocialLoginService {
 
     public AuthTokens login(OAuthLoginParams params){
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
-        log.info("LOG : Received response from Kakao API: {}", oAuthInfoResponse.getNickname());
-
+        log.info("user nickname: {}", oAuthInfoResponse.getNickname());
         Long memberId= findOrCreateMember(oAuthInfoResponse);
         return authTokensGenerator.generate(memberId);
     }

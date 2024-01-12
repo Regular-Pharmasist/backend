@@ -3,7 +3,7 @@ package com.example.medicinebackend.Service;
 
 import static java.util.Collections.emptyList;
 
-import com.example.medicinebackend.FeignClient.OpenFeignClient;
+import com.example.medicinebackend.Client.OpenFeignClient;
 import com.example.medicinebackend.Response.GeneralMedicineResponse;
 import com.example.medicinebackend.Response.RiskDataResponse.Item;
 import com.example.medicinebackend.Response.RiskDataResponse.RiskDataResponse;
