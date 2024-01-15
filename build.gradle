@@ -28,8 +28,6 @@ dependencies {
     implementation 'mysql:mysql-connector-java:8.0.29'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
     implementation 'io.github.openfeign:feign-jackson:11.7'
-    implementation 'com.google.cloud:google-cloud-vision:1.75.0'
-
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.1'
 
 //    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
