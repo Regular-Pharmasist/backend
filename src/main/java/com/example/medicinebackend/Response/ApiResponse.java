@@ -1,4 +1,4 @@
-package com.example.medicinebackend;
+package com.example.medicinebackend.Response;
 
 import java.util.List;
 
