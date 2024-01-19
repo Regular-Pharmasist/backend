@@ -20,7 +20,7 @@ import java.util.List;
 
 public class GoogleCloudVisionApiService {
     static{
-        System.setProperty("GOOGLE_APPLICATION_CREDENTIALS", "/Users/choyongeun/Documents/GitHub/RegularMedicine/backend/src/main/resources/medicine-411304-505fe523d410.json");
+        System.setProperty("GOOGLE_APPLICATION_CREDENTIALS", "/Users/choyongeun/Documents/GitHub/RegularMedicine/backend/src/main/resources/medicinetextextractor-f7b2c7993e79.json");
     }
 
     public List<String> medicineNameExtractor(MultipartFile imageFile){
