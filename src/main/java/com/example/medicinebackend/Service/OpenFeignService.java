@@ -25,6 +25,14 @@ public class OpenFeignService {
     @Value("${api.serviceKey}")
     private String serviceKey;
 
+    public List<Object> getMedicineData(List<String> medicineNames) {
+        List<Object> combinedResponse = new ArrayList<>();
+        for(String name : medicineNames){
+            combinedResponse.add(getMedicineDataByName(name));
+        }
+        return combinedResponse;
+    }
+
 
     public Object getMedicineDataByName(String productName) {
         List<Item> riskData = getRiskMedicineDataByName(productName);
@@ -83,6 +91,5 @@ public class OpenFeignService {
             }
         }
     }
-
 }
 
