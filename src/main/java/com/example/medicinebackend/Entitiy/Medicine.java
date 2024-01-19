@@ -19,6 +19,7 @@ public class Medicine {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "medicine_id")
     private Long medicineId;
 
     @Column(nullable = false)

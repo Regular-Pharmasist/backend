@@ -36,6 +36,7 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    implementation 'com.google.cloud:google-cloud-vision:3.31.0'
 
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
 
@@ -47,4 +48,7 @@ tasks.named('bootBuildImage') {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+bootJar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
