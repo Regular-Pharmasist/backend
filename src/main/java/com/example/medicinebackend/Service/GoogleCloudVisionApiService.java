@@ -10,6 +10,9 @@ import com.google.cloud.vision.v1.ImageSource;
 import com.google.cloud.vision.v1.Feature;
 import com.google.cloud.vision.v1.Feature.Type;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -18,9 +21,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
+@Component
 public class GoogleCloudVisionApiService {
     static{
-        System.setProperty("GOOGLE_APPLICATION_CREDENTIALS", "/Users/choyongeun/Documents/GitHub/RegularMedicine/backend/src/main/resources/medicinetextextractor-f7b2c7993e79.json");
+        System.setProperty("GOOGLE_APPLICATION_CREDENTIALS", "/Users/choyongeun/Documents/GitHub/RegularMedicine/backend/src/main/resources/medicine-411304-505fe523d410.json");
     }
 
     public List<String> medicineNameExtractor(MultipartFile imageFile){
@@ -54,6 +59,7 @@ public class GoogleCloudVisionApiService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        log.info("drugNames : {}", drugNames);
         return drugNames;
     }
     private static boolean isDesiredWord(String word) {

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+version = '0.3.2-SNAPSHOT'
 
 java {
     sourceCompatibility = '17'
@@ -29,6 +29,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
     implementation 'io.github.openfeign:feign-jackson:11.7'
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.1'
+    runtimeOnly 'com.h2database:h2'
 
 //    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 //    implementation platform('org.springframework.boot:spring-boot-dependencies:2.7.15')
@@ -39,6 +40,8 @@ dependencies {
     implementation 'com.google.cloud:google-cloud-vision:3.31.0'
 
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
+    testImplementation "org.springframework.cloud:spring-cloud-contract-wiremock:3.1.5"
+
 
 }
 
