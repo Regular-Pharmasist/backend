@@ -23,12 +23,11 @@ jobs:
       uses: google-github-actions/setup-gcloud@v2
       with:
         project_id: ${{ env.PROJECT_ID }}
-
     - name: Auth to Google Cloud
       uses: google-github-actions/auth@v0.4.0
       with:
         credentials_json: ${{ secrets.GCP_SA_KEY }}
-       secrets: inherit
+        secrets: inherit
     # 소스 코드 압축
     - name: Archive Source
       run: tar -czvf source.tar.gz .
