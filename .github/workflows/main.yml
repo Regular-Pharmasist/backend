@@ -28,7 +28,7 @@ jobs:
       uses: google-github-actions/auth@v0.4.0
       with:
         credentials_json: ${{ secrets.GCP_SA_KEY }}
-
+       secrets: inherit
     # 소스 코드 압축
     - name: Archive Source
       run: tar -czvf source.tar.gz .
