@@ -24,11 +24,12 @@ import java.util.List;
 @Slf4j
 @Component
 public class GoogleCloudVisionApiService {
-    static{
-        System.setProperty("GOOGLE_APPLICATION_CREDENTIALS", "/Users/choyongeun/Documents/GitHub/RegularMedicine/backend/src/main/resources/medicine-411304-505fe523d410.json");
+    static {
+        System.setProperty("GOOGLE_APPLICATION_CREDENTIALS",
+                "/Users/choyongeun/Documents/GitHub/RegularMedicine/backend/src/main/resources/medicine-411304-505fe523d410.json");
     }
 
-    public List<String> medicineNameExtractor(MultipartFile imageFile){
+    public List<String> medicineNameExtractor(MultipartFile imageFile) {
         List<String> drugNames = new ArrayList<>();
 
         try (ImageAnnotatorClient vision = ImageAnnotatorClient.create()) {
@@ -38,8 +39,8 @@ public class GoogleCloudVisionApiService {
 
             // 텍스트 감지를 위한 특징 설정
             Feature feature = Feature.newBuilder().setType(Type.TEXT_DETECTION).build();
-            AnnotateImageRequest request =
-                    AnnotateImageRequest.newBuilder().addFeatures(feature).setImage(image).build();
+            AnnotateImageRequest request = AnnotateImageRequest.newBuilder().addFeatures(feature).setImage(image)
+                    .build();
 
             List<AnnotateImageRequest> requests = new ArrayList<>();
             requests.add(request);
@@ -49,24 +50,40 @@ public class GoogleCloudVisionApiService {
 
             // 약물 이름 처리 및 결과 리스트 반환
             for (AnnotateImageResponse response : responses.getResponsesList()) {
-                String[] words = response.getTextAnnotationsList().get(0).getDescription().split("\\s+");
+                String description = response.getTextAnnotationsList().get(0).getDescription();
+                String[] words = description.split("\\s+");
+
                 for (String word : words) {
-                    if (isDesiredWord(word)) {
+                    // 밀리그램 변경
+                    word = replaceMgPlaceholder(word);
+
+                    if (isDesiredWord(word) && !drugNames.contains(word)) {
                         drugNames.add(word);
                     }
                 }
             }
+
+//            // 유일한 약물 이름 출력 또는 사용
+//            for (String drugName : drugNames) {
+//                System.out.println(drugName);
+//            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        log.info("drugNames : {}", drugNames);
         return drugNames;
     }
+
+    private static String replaceMgPlaceholder(String word) {
+        // 밀리그램 변경
+        return word.replaceAll("mg", "밀리그램");
+    }
+
     private static boolean isDesiredWord(String word) {
         // 파싱 단어 조건
         // 차후 상세 변동 요망
-        return (word.contains("정") || word.contains("캡슐") || word.contains("필름") || word.contains("캅셀") || word.contains("시럽"))
-                && !word.contains("정보") && !word.contains("정제") && !word.contains("캅셀제")&& !word.contains("시럽제");
+        return (word.contains("정") || word.contains("캡슐") || word.contains("필름") || word.contains("캅셀")
+                || word.contains("시럽"))
+                && !word.contains("정보") && !word.contains("정제") && !word.contains("캅셀제") && !word.contains("시럽제");
     }
 
     private static MultipartFile getYourMultipartFile() {
