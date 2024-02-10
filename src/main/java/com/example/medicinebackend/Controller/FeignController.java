@@ -1,5 +1,7 @@
 package com.example.medicinebackend.Controller;
 
+import com.example.medicinebackend.Response.ApiResponse.MedicineData;
+import com.example.medicinebackend.Response.MedicineResponseDto;
 import com.example.medicinebackend.Service.GoogleCloudVisionApiService;
 import com.example.medicinebackend.Service.OpenFeignService;
 import java.util.List;
@@ -24,7 +26,7 @@ public class FeignController {
     }
 
     @PostMapping("/medicine")
-    public List<Object> getMedicineData(@RequestParam(value = "imageFile")MultipartFile imageFile) {
+    public List<List<MedicineResponseDto>> getMedicineData(@RequestParam(value = "imageFile", required = false)MultipartFile imageFile) {
         return openFeignService.getMedicineData(googleCloudVisionApiService.medicineNameExtractor(imageFile));
     }
 

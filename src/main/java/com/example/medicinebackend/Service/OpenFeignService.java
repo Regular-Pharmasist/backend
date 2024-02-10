@@ -4,8 +4,11 @@ package com.example.medicinebackend.Service;
 import static java.util.Collections.emptyList;
 
 import com.example.medicinebackend.Client.OpenFeignClient;
+import com.example.medicinebackend.Response.ApiResponse.MedicineData;
 import com.example.medicinebackend.Response.GeneralMedicineResponse;
+import com.example.medicinebackend.Response.MedicineResponseDto;
 import com.example.medicinebackend.Response.RiskDataResponse;
+import com.example.medicinebackend.Response.RiskDataResponse.Item;
 import io.jsonwebtoken.lang.Objects;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +28,8 @@ public class OpenFeignService {
     @Value("${api.serviceKey}")
     private String serviceKey;
 
-    public List<Object> getMedicineData(List<String> medicineNames) {
-        List<Object> combinedResponse = new ArrayList<>();
+    public List<List<MedicineResponseDto>> getMedicineData(List<String> medicineNames) {
+        List<List<MedicineResponseDto>> combinedResponse = new ArrayList<>();
         for (String name : medicineNames) {
             combinedResponse.add(getMedicineDataByName(name));
         }
@@ -35,10 +38,10 @@ public class OpenFeignService {
     }
 
 
-    public Object getMedicineDataByName(String productName) {
-        List<RiskDataResponse.Item> riskData = getRiskMedicineDataByName(productName);
+    public List<MedicineResponseDto> getMedicineDataByName(String productName) {
+        List<MedicineResponseDto> riskData = getRiskMedicineDataByName(productName);
         if (riskData.isEmpty()) {
-            List<GeneralMedicineResponse.Item> generalMedicineData = getGeneralMedicineData(productName);
+            List<MedicineResponseDto> generalMedicineData = getGeneralMedicineData(productName);
             return generalMedicineData;
         } else if (!riskData.isEmpty()) {
             return riskData;
@@ -48,38 +51,20 @@ public class OpenFeignService {
 
     }
 
-    public List<GeneralMedicineResponse.Item> getGeneralMedicineData(String productName) {
+    public List<MedicineResponseDto> getGeneralMedicineData(String productName) {
         GeneralMedicineResponse response = feignClient.getMedicineData(serviceKey, "json", productName);
         if (!Objects.nullSafeEquals(response.getHeader().getResultCode(), "00")) {
             throw new RuntimeException();
         }
 
         if (response.getBody().getTotalCount() > 10 || response.getBody().getTotalCount() == 0) {
-            return emptyList();
+            return null; //에러처리 하기
         }
-
-        return response.getBody().getItems().stream()
-                .map(item -> new GeneralMedicineResponse.Item(
-                        item.getEntpName(),
-                        item.getItemName(),
-                        item.getItemSeq(),
-                        item.getEfcyQesitm(),
-                        item.getUseMethodQesitm(),
-                        item.getAtpnWarnQesitm(),
-                        item.getAtpnQesitm(),
-                        item.getIntrcQesitm(),
-                        item.getSeQesitm(),
-                        item.getDepositMethodQesitm(),
-                        item.getOpenDe(),
-                        item.getUpdateDe(),
-                        item.getItemImage(),
-                        item.getBizrno()))
-                .collect(Collectors.toList());
-
+        return convertToMedicineResponseDto(response);
     }
 
 
-    public List<RiskDataResponse.Item> getRiskMedicineDataByName(String productName) {
+    public List<MedicineResponseDto> getRiskMedicineDataByName(String productName) {
         // 생각해보기 -> 자주 찾는 약물 생각해보기
         RiskDataResponse response = feignClient.getRiskMedicineData(serviceKey, "json", productName);
         RiskDataResponse drugsData = feignClient.getDrugsMedicineData(serviceKey, "json", productName);
@@ -91,54 +76,58 @@ public class OpenFeignService {
 
         if (response.getBody().getTotalCount() > 10 || response.getBody().getTotalCount() == 0) {
             if (drugsData.getBody().getTotalCount() > 10 || response.getBody().getTotalCount() == 0) {
-                return emptyList();
-            } else {
-                return convertToRiskDataList(drugsData);
+                return null; //에러처리하기
             }
-        }
 
-        return convertToRiskDataList(response);
+        }
+        return convertToMedicineResponseDto(response);
 
     }
+    public List<MedicineResponseDto> convertToMedicineResponseDto(GeneralMedicineResponse input) {
+        MedicineResponseDto response = new MedicineResponseDto();
+        List<MedicineResponseDto> responses = new ArrayList<>();
 
-    public List<RiskDataResponse.Item> convertToRiskDataList(RiskDataResponse response) {
-        return response.getBody().getItems().stream()
-                .map(item -> new RiskDataResponse.Item(
-                        item.getEntpName(),
-                        item.getItemName(),
-                        item.getItemSeq(),
-                        item.getItemPermitDate(),
-                        item.getEtcOtcCode(),
-                        item.getClassNo(),
-                        item.getChart(),
-                        item.getBarCode(),
-                        item.getMaterialName(),
-                        item.getEeDocId(),
-                        item.getUdDocId(),
-                        item.getNbDocId(),
-                        item.getInsertFile(),
-                        item.getStorageMethod(),
-                        item.getValidTerm(),
-                        item.getPackUnit(),
-                        item.getEdiCode(),
-                        item.getTypeName(),
-                        item.getChangeDate(),
-                        item.getBizrno()))
-                .collect(Collectors.toList());
+        List<GeneralMedicineResponse.Item> items = input.getBody().getItems();
+        items.forEach(item -> {
+            response.setItemName(item.getItemName());
+            response.setItemCode(item.getItemSeq());
+            response.setEfficiency(item.getEfcyQesitm());
+            response.setWarn(item.getAtpnWarnQesitm() + "\n" + item.getAtpnQesitm()); // 경고 연결
+            response.setSideEffect(item.getSeQesitm());
+            response.setImage(item.getItemImage());
+            response.setMaterial(null);
+            response.setTypeName(null);
+            responses.add(response);
+        });
+
+        return responses;
+    }
+
+    public List<MedicineResponseDto> convertToMedicineResponseDto(RiskDataResponse input) {
+        MedicineResponseDto response = new MedicineResponseDto();
+        List<MedicineResponseDto> responses = new ArrayList<>();
+
+        List<RiskDataResponse.Item> items = input.getBody().getItems();
+        items.forEach(item -> {
+            response.setItemName(item.getItemName());
+            response.setItemCode(item.getItemSeq());
+            response.setEfficiency(null);
+            response.setWarn(null);
+            response.setSideEffect(null);
+            response.setImage(null);
+            response.setMaterial(item.getMaterialName());
+            response.setTypeName(item.getTypeName());
+            responses.add(response);
+        });
+
+        return responses;
     }
 
 }
 
-//    public void filterItemsByProductName(RiskDataResponse subjectData, String productName,
-//                                         List<Item> combinedRiskData) {
-//        if (subjectData != null && subjectData.getBody() != null && subjectData.getBody().getItems() != null) {
-//            List<Item> items = subjectData.getBody().getItems();
-//            for (Item item : items) {
-//                if (item != null && item.getItemName().contains(productName)) {
-//                    combinedRiskData.add(item);
-//                }
-//            }
-//        }
-//    }
+
+
+
+
 
 
