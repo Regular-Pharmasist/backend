@@ -40,15 +40,14 @@ public class OpenFeignService {
 
     public List<MedicineResponseDto> getMedicineDataByName(String productName) {
         List<MedicineResponseDto> riskData = getRiskMedicineDataByName(productName);
-        if (riskData.isEmpty()) {
+        if (riskData.isEmpty()||riskData==null) {
             List<MedicineResponseDto> generalMedicineData = getGeneralMedicineData(productName);
             return generalMedicineData;
         } else if (!riskData.isEmpty()) {
             return riskData;
         }
 
-        return emptyList();// 빈 리스트 반환
-
+        return emptyList();
     }
 
     public List<MedicineResponseDto> getGeneralMedicineData(String productName) {
@@ -58,7 +57,7 @@ public class OpenFeignService {
         }
 
         if (response.getBody().getTotalCount() > 10 || response.getBody().getTotalCount() == 0) {
-            return null; //에러처리 하기
+            return emptyList(); //에러처리 하기
         }
         return convertToMedicineResponseDto(response);
     }
@@ -76,7 +75,7 @@ public class OpenFeignService {
 
         if (response.getBody().getTotalCount() > 10 || response.getBody().getTotalCount() == 0) {
             if (drugsData.getBody().getTotalCount() > 10 || response.getBody().getTotalCount() == 0) {
-                return null; //에러처리하기
+                return emptyList();
             }
 
         }
