@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
+@Data
 @NoArgsConstructor
 @Table(name = "medicine")
 public class Medicine {
@@ -30,5 +30,6 @@ public class Medicine {
     private String image;
     private String material;
     private String typeName;
+
 
 }
