@@ -16,6 +16,7 @@ import com.example.medicinebackend.Response.RiskDataResponse.Item;
 import io.jsonwebtoken.lang.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class OpenFeignService {
@@ -47,11 +48,16 @@ public class OpenFeignService {
 
     public List<MedicineResponseDto> getMedicineDataByName(String productName) {
         List<MedicineResponseDto> riskData = getRiskMedicineDataByName(productName);
-        if (riskData.isEmpty()||riskData==null) {
-            List<MedicineResponseDto> generalMedicineData = getGeneralMedicineData(productName);
-            saveMedicineData(generalMedicineData);
+        List<MedicineResponseDto> generalMedicineData = getGeneralMedicineData(productName);
+
+        if (!generalMedicineData.isEmpty()) {
             return generalMedicineData;
-        } else if (!riskData.isEmpty()) {
+        }
+//        if (riskData.isEmpty()||riskData==null) {
+//            saveMedicineData(generalMedicineData);
+//            return generalMedicineData;
+//        }
+        else if (!riskData.isEmpty()) {
             saveMedicineData(riskData);
             return riskData;
         }
@@ -68,11 +74,10 @@ public class OpenFeignService {
         if (response.getBody().getTotalCount() > 10 || response.getBody().getTotalCount() == 0) {
             return emptyList(); //에러처리 하기
         }
-        List<MedicineUsage> medicineUsages = medicineUsageRepository.findAll();
-        medicineUsages.forEach(medicineUsage -> log.info("Medicine: {}", medicineUsage));
-
-        List<Medicine> medicines = medicineRepository.findAll();
-        medicines.forEach(medicine -> log.info("Medicine: {}", medicine));
+//        List<MedicineUsage> medicineUsages = medicineUsageRepository.findAll();
+//        List<Medicine> medicines = medicineRepository.findAll();
+//        log.info("medicineUsage : {}", medicineUsages);
+//        log.info("medicines : {}", medicines);
 
         return convertToMedicineResponseDto(response);
     }
@@ -97,6 +102,7 @@ public class OpenFeignService {
         return convertToMedicineResponseDto(response);
 
     }
+
     public List<MedicineResponseDto> convertToMedicineResponseDto(GeneralMedicineResponse input) {
         MedicineResponseDto response = new MedicineResponseDto();
         List<MedicineResponseDto> responses = new ArrayList<>();
@@ -140,17 +146,20 @@ public class OpenFeignService {
     public void saveMedicineData(List<MedicineResponseDto> dtoList) {
         List<Medicine> medicines = new ArrayList<>();
         for (MedicineResponseDto dto : dtoList) {
-            Medicine medicine = new Medicine();
-            // DTO의 데이터를 엔티티에 할당
-            medicine.setItemName(dto.getItemName());
-            medicine.setItemCode(dto.getItemCode());
-            medicine.setEfficiency(dto.getEfficiency());
-            medicine.setWarn(dto.getWarn());
-            medicine.setSideEffect(dto.getSideEffect());
-            medicine.setImage(dto.getImage());
-            medicine.setMaterial(dto.getMaterial());
-            medicine.setTypeName(dto.getTypeName());
-            medicines.add(medicine);
+            Optional<Medicine> existingMedicine = medicineRepository.findByItemCode(dto.getItemCode());
+
+            if (!existingMedicine.isPresent()) {
+                Medicine medicine = new Medicine();
+                medicine.setItemName(dto.getItemName());
+                medicine.setItemCode(dto.getItemCode());
+                medicine.setEfficiency(dto.getEfficiency());
+                medicine.setWarn(dto.getWarn());
+                medicine.setSideEffect(dto.getSideEffect());
+                medicine.setImage(dto.getImage());
+                medicine.setMaterial(dto.getMaterial());
+                medicine.setTypeName(dto.getTypeName());
+                medicines.add(medicine);
+            }
         }
         log.info("Saved {} medicines to the database", medicines.size());
         medicineRepository.saveAll(medicines); // 변환된 엔티티 리스트 저장
