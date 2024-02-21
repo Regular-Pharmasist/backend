@@ -4,6 +4,10 @@ package com.example.medicinebackend.Service;
 import static java.util.Collections.emptyList;
 
 import com.example.medicinebackend.Client.OpenFeignClient;
+import com.example.medicinebackend.Entitiy.Medicine;
+import com.example.medicinebackend.Entitiy.MedicineUsage;
+import com.example.medicinebackend.Repository.MedicineRepository;
+import com.example.medicinebackend.Repository.MedicineUsageRepository;
 import com.example.medicinebackend.Response.ApiResponse.MedicineData;
 import com.example.medicinebackend.Response.GeneralMedicineResponse;
 import com.example.medicinebackend.Response.MedicineResponseDto;
@@ -12,6 +16,7 @@ import com.example.medicinebackend.Response.RiskDataResponse.Item;
 import io.jsonwebtoken.lang.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class OpenFeignService {
     private final OpenFeignClient feignClient;
+    private final MedicineRepository medicineRepository;
+    private final MedicineUsageRepository medicineUsageRepository;
 
     @Value("${api.serviceKey}")
     private String serviceKey;
@@ -42,8 +49,10 @@ public class OpenFeignService {
         List<MedicineResponseDto> riskData = getRiskMedicineDataByName(productName);
         if (riskData.isEmpty()||riskData==null) {
             List<MedicineResponseDto> generalMedicineData = getGeneralMedicineData(productName);
+            saveMedicineData(generalMedicineData);
             return generalMedicineData;
         } else if (!riskData.isEmpty()) {
+            saveMedicineData(riskData);
             return riskData;
         }
 
@@ -59,6 +68,12 @@ public class OpenFeignService {
         if (response.getBody().getTotalCount() > 10 || response.getBody().getTotalCount() == 0) {
             return emptyList(); //에러처리 하기
         }
+        List<MedicineUsage> medicineUsages = medicineUsageRepository.findAll();
+        medicineUsages.forEach(medicineUsage -> log.info("Medicine: {}", medicineUsage));
+
+        List<Medicine> medicines = medicineRepository.findAll();
+        medicines.forEach(medicine -> log.info("Medicine: {}", medicine));
+
         return convertToMedicineResponseDto(response);
     }
 
@@ -121,6 +136,26 @@ public class OpenFeignService {
 
         return responses;
     }
+
+    public void saveMedicineData(List<MedicineResponseDto> dtoList) {
+        List<Medicine> medicines = new ArrayList<>();
+        for (MedicineResponseDto dto : dtoList) {
+            Medicine medicine = new Medicine();
+            // DTO의 데이터를 엔티티에 할당
+            medicine.setItemName(dto.getItemName());
+            medicine.setItemCode(dto.getItemCode());
+            medicine.setEfficiency(dto.getEfficiency());
+            medicine.setWarn(dto.getWarn());
+            medicine.setSideEffect(dto.getSideEffect());
+            medicine.setImage(dto.getImage());
+            medicine.setMaterial(dto.getMaterial());
+            medicine.setTypeName(dto.getTypeName());
+            medicines.add(medicine);
+        }
+        log.info("Saved {} medicines to the database", medicines.size());
+        medicineRepository.saveAll(medicines); // 변환된 엔티티 리스트 저장
+    }
+
 
 }
 
