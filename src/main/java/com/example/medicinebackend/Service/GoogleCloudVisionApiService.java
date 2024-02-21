@@ -26,7 +26,7 @@ import java.util.List;
 public class GoogleCloudVisionApiService {
     static {
         System.setProperty("GOOGLE_APPLICATION_CREDENTIALS",
-                "/Users/choyongeun/Documents/GitHub/RegularMedicine/backend/src/main/resources/medicine-411304-505fe523d410.json");
+                "/Users/choyongeun/Documents/GitHub/RegularMedicine/backend/src/main/resources/dailymedicine-414413-210db2af658a.json");
     }
 
     public List<String> medicineNameExtractor(MultipartFile imageFile) {
