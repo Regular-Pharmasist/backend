@@ -5,6 +5,7 @@ import com.example.medicinebackend.JWT.AuthTokensGenerator;
 import com.example.medicinebackend.Params.OAuthLoginParams;
 import com.example.medicinebackend.Repository.MemberRepository;
 import com.example.medicinebackend.Response.OAuthInfoResponse;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,13 @@ public class SocialLoginService {
     private final AuthTokensGenerator authTokensGenerator;
     private final RequestOAuthInfoService requestOAuthInfoService;
 
+    public static Member currentMemberId;
+
     public AuthTokens login(OAuthLoginParams params){
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
         log.info("user nickname: {}", oAuthInfoResponse.getNickname());
         Long memberId= findOrCreateMember(oAuthInfoResponse);
+        currentMemberId = memberRepository.findByMemberId(memberId);
         return authTokensGenerator.generate(memberId);
     }
 
@@ -39,5 +43,7 @@ public class SocialLoginService {
                 .build();
         return memberRepository.save(member).getMemberId();
     }
+
+
 
 }

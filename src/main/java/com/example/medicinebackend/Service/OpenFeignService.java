@@ -31,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class OpenFeignService {
     private final OpenFeignClient feignClient;
     private final MedicineRepository medicineRepository;
-    private final MedicineUsageRepository medicineUsageRepository;
 
     @Value("${api.serviceKey}")
     private String serviceKey;
@@ -51,12 +50,10 @@ public class OpenFeignService {
         List<MedicineResponseDto> generalMedicineData = getGeneralMedicineData(productName);
 
         if (!generalMedicineData.isEmpty()) {
+            saveMedicineData(generalMedicineData);
             return generalMedicineData;
         }
-//        if (riskData.isEmpty()||riskData==null) {
-//            saveMedicineData(generalMedicineData);
-//            return generalMedicineData;
-//        }
+
         else if (!riskData.isEmpty()) {
             saveMedicineData(riskData);
             return riskData;
@@ -162,7 +159,7 @@ public class OpenFeignService {
             }
         }
         log.info("Saved {} medicines to the database", medicines.size());
-        medicineRepository.saveAll(medicines); // 변환된 엔티티 리스트 저장
+        medicineRepository.saveAll(medicines);
     }
 
 
