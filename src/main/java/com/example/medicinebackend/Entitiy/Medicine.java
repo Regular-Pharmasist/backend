@@ -22,13 +22,23 @@ public class Medicine {
     private Long medicineId;
 
     private String itemCode;
+
     @Column(nullable = false)
     private String itemName;
+
+    @Column(columnDefinition = "TEXT")
     private String efficiency;
+
+    @Column(columnDefinition = "TEXT")
     private String warn;
+
+    @Column(columnDefinition = "TEXT")
     private String sideEffect;
+
     private String image;
+
     private String material;
+
     private String typeName;
 
 

@@ -1,5 +1,6 @@
 package com.example.medicinebackend.Response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -39,6 +40,7 @@ public class RiskDataResponse {
    @Data
    @NoArgsConstructor
    @AllArgsConstructor
+   @JsonIgnoreProperties(ignoreUnknown = true)
    public static class Item {
          @JsonProperty("ENTP_NAME")
          private String entpName;

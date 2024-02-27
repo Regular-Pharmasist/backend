@@ -11,6 +11,7 @@ import com.example.medicinebackend.Repository.MedicineUsageRepository;
 import com.example.medicinebackend.Response.ApiResponse.MedicineData;
 import com.example.medicinebackend.Response.GeneralMedicineResponse;
 import com.example.medicinebackend.Response.MedicineResponseDto;
+import com.example.medicinebackend.Response.PermittedDataResponse;
 import com.example.medicinebackend.Response.RiskDataResponse;
 import com.example.medicinebackend.Response.RiskDataResponse.Item;
 import io.jsonwebtoken.lang.Objects;
@@ -53,7 +54,6 @@ public class OpenFeignService {
             saveMedicineData(generalMedicineData);
             return generalMedicineData;
         }
-
         else if (!riskData.isEmpty()) {
             saveMedicineData(riskData);
             return riskData;
@@ -82,20 +82,29 @@ public class OpenFeignService {
 
     public List<MedicineResponseDto> getRiskMedicineDataByName(String productName) {
         // 생각해보기 -> 자주 찾는 약물 생각해보기
-        RiskDataResponse response = feignClient.getRiskMedicineData(serviceKey, "json", productName);
-        RiskDataResponse drugsData = feignClient.getDrugsMedicineData(serviceKey, "json", productName);
+        PermittedDataResponse response = feignClient.getPermittedMedicineData(serviceKey,"json",productName);
+//        RiskDataResponse response = feignClient.getPregnantMedicineData(serviceKey, "json", productName);
+//        RiskDataResponse drugsData = feignClient.getDrugsMedicineData(serviceKey, "json", productName);
 
-        if (!Objects.nullSafeEquals(response.getHeader().getResultCode(), "00") || !Objects.nullSafeEquals(
-                drugsData.getHeader().getResultCode(), "00")) {
+        if (!Objects.nullSafeEquals(response.getHeader().getResultCode(), "00")) {
             throw new RuntimeException();
         }
 
-        if (response.getBody().getTotalCount() > 10 || response.getBody().getTotalCount() == 0) {
-            if (drugsData.getBody().getTotalCount() > 10 || response.getBody().getTotalCount() == 0) {
-                return emptyList();
-            }
+//        if (response.getBody().getTotalCount() > 10 || response.getBody().getTotalCount() == 0) {
+//            return emptyList(); //에러처리 하기
+//        }
 
-        }
+//        if (!Objects.nullSafeEquals(response.getHeader().getResultCode(), "00") || !Objects.nullSafeEquals(
+//                drugsData.getHeader().getResultCode(), "00")) {
+//            throw new RuntimeException();
+//        }
+//
+//        if (response.getBody().getTotalCount() > 10 || response.getBody().getTotalCount() == 0) {
+//            if (drugsData.getBody().getTotalCount() > 10 || response.getBody().getTotalCount() == 0) {
+//                return emptyList();
+//            }
+//
+//        }
         return convertToMedicineResponseDto(response);
 
     }
@@ -120,20 +129,20 @@ public class OpenFeignService {
         return responses;
     }
 
-    public List<MedicineResponseDto> convertToMedicineResponseDto(RiskDataResponse input) {
+    public List<MedicineResponseDto> convertToMedicineResponseDto(PermittedDataResponse input) {
         MedicineResponseDto response = new MedicineResponseDto();
         List<MedicineResponseDto> responses = new ArrayList<>();
 
-        List<RiskDataResponse.Item> items = input.getBody().getItems();
+        List<PermittedDataResponse.Item> items = input.getBody().getItems();
         items.forEach(item -> {
             response.setItemName(item.getItemName());
             response.setItemCode(item.getItemSeq());
-            response.setEfficiency(null);
-            response.setWarn(null);
-            response.setSideEffect(null);
+            response.setEfficiency(String.valueOf(item.getEeDocData()));
+            response.setWarn(String.valueOf(item.getUdDocData()));
+            response.setSideEffect(String.valueOf(item.getNbDocData()));
             response.setImage(null);
             response.setMaterial(item.getMaterialName());
-            response.setTypeName(item.getTypeName());
+            response.setTypeName(item.getCancelName());
             responses.add(response);
         });
 
