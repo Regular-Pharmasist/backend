@@ -89,10 +89,9 @@ public class OpenFeignService {
         if (!Objects.nullSafeEquals(response.getHeader().getResultCode(), "00")) {
             throw new RuntimeException();
         }
-
-//        if (response.getBody().getTotalCount() > 10 || response.getBody().getTotalCount() == 0) {
-//            return emptyList(); //에러처리 하기
-//        }
+        if (response.getBody().getTotalCount() > 10 || response.getBody().getTotalCount() == 0) {
+            return emptyList(); //에러처리 하기
+        }
 
 //        if (!Objects.nullSafeEquals(response.getHeader().getResultCode(), "00") || !Objects.nullSafeEquals(
 //                drugsData.getHeader().getResultCode(), "00")) {

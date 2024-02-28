@@ -24,10 +24,10 @@ public class PermittedDataResponse {
     @Data
     @NoArgsConstructor
     public static class Body {
-        private String pageNo;
-        private String totalCount;
+        private int pageNo;
+        private int totalCount;
         private List<Item> items;
-        private String numOfRows;
+        private int numOfRows;
     }
 
     @Data
