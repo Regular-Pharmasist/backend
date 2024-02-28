@@ -4,10 +4,6 @@ package com.example.medicinebackend.Service;
 import static java.util.Collections.emptyList;
 
 import com.example.medicinebackend.Client.OpenFeignClient;
-import com.example.medicinebackend.Entitiy.Medicine;
-import com.example.medicinebackend.Entitiy.MedicineUsage;
-import com.example.medicinebackend.Repository.MedicineRepository;
-import com.example.medicinebackend.Repository.MedicineUsageRepository;
 import com.example.medicinebackend.Response.ApiResponse.MedicineData;
 import com.example.medicinebackend.Response.GeneralMedicineResponse;
 import com.example.medicinebackend.Response.MedicineResponseDto;
@@ -16,8 +12,6 @@ import com.example.medicinebackend.Response.RiskDataResponse.Item;
 import io.jsonwebtoken.lang.Objects;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,12 +19,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
 public class OpenFeignService {
     private final OpenFeignClient feignClient;
-    private final MedicineRepository medicineRepository;
 
     @Value("${api.serviceKey}")
     private String serviceKey;
@@ -47,15 +40,10 @@ public class OpenFeignService {
 
     public List<MedicineResponseDto> getMedicineDataByName(String productName) {
         List<MedicineResponseDto> riskData = getRiskMedicineDataByName(productName);
-        List<MedicineResponseDto> generalMedicineData = getGeneralMedicineData(productName);
-
-        if (!generalMedicineData.isEmpty()) {
-            saveMedicineData(generalMedicineData);
+        if (riskData.isEmpty()||riskData==null) {
+            List<MedicineResponseDto> generalMedicineData = getGeneralMedicineData(productName);
             return generalMedicineData;
-        }
-
-        else if (!riskData.isEmpty()) {
-            saveMedicineData(riskData);
+        } else if (!riskData.isEmpty()) {
             return riskData;
         }
 
@@ -71,11 +59,6 @@ public class OpenFeignService {
         if (response.getBody().getTotalCount() > 10 || response.getBody().getTotalCount() == 0) {
             return emptyList(); //에러처리 하기
         }
-//        List<MedicineUsage> medicineUsages = medicineUsageRepository.findAll();
-//        List<Medicine> medicines = medicineRepository.findAll();
-//        log.info("medicineUsage : {}", medicineUsages);
-//        log.info("medicines : {}", medicines);
-
         return convertToMedicineResponseDto(response);
     }
 
@@ -99,7 +82,6 @@ public class OpenFeignService {
         return convertToMedicineResponseDto(response);
 
     }
-
     public List<MedicineResponseDto> convertToMedicineResponseDto(GeneralMedicineResponse input) {
         MedicineResponseDto response = new MedicineResponseDto();
         List<MedicineResponseDto> responses = new ArrayList<>();
@@ -139,29 +121,6 @@ public class OpenFeignService {
 
         return responses;
     }
-
-    public void saveMedicineData(List<MedicineResponseDto> dtoList) {
-        List<Medicine> medicines = new ArrayList<>();
-        for (MedicineResponseDto dto : dtoList) {
-            Optional<Medicine> existingMedicine = medicineRepository.findByItemCode(dto.getItemCode());
-
-            if (!existingMedicine.isPresent()) {
-                Medicine medicine = new Medicine();
-                medicine.setItemName(dto.getItemName());
-                medicine.setItemCode(dto.getItemCode());
-                medicine.setEfficiency(dto.getEfficiency());
-                medicine.setWarn(dto.getWarn());
-                medicine.setSideEffect(dto.getSideEffect());
-                medicine.setImage(dto.getImage());
-                medicine.setMaterial(dto.getMaterial());
-                medicine.setTypeName(dto.getTypeName());
-                medicines.add(medicine);
-            }
-        }
-        log.info("Saved {} medicines to the database", medicines.size());
-        medicineRepository.saveAll(medicines);
-    }
-
 
 }
 
