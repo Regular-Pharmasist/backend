@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface MedicineRepository extends JpaRepository<Medicine,Long> {
     Long findMedicineIdByItemName(String itemName);
 
-    Optional<Medicine> findByItemName(String name);
+    List<Medicine> findByItemName(String name);
 
-    Optional<Medicine> findByItemCode(String itemCode);
+    List<Medicine> findByItemCode(String itemCode);
 }
