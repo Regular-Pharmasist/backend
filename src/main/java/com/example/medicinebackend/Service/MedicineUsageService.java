@@ -24,6 +24,8 @@ public class MedicineUsageService {
     @Transactional
     public void saveUserUsage(String name, int frequency, int duration, boolean isActive, Date startDate, Date endDate){
         Medicine medicine = medicineRepository.findByItemName(name)
+                .stream()
+                .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("Medicine not found with name: " + name));
         ;
         Member memberId = SocialLoginService.currentMemberId;

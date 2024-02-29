@@ -151,9 +151,9 @@ public class OpenFeignService {
     public void saveMedicineData(List<MedicineResponseDto> dtoList) {
         List<Medicine> medicines = new ArrayList<>();
         for (MedicineResponseDto dto : dtoList) {
-            Optional<Medicine> existingMedicine = medicineRepository.findByItemCode(dto.getItemCode());
+            List<Medicine> existingMedicine = medicineRepository.findByItemCode(dto.getItemCode());
 
-            if (!existingMedicine.isPresent()) {
+            if (existingMedicine.isEmpty()) {
                 Medicine medicine = new Medicine();
                 medicine.setItemName(dto.getItemName());
                 medicine.setItemCode(dto.getItemCode());
