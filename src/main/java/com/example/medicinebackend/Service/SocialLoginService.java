@@ -4,6 +4,7 @@ import com.example.medicinebackend.JWT.AuthTokens;
 import com.example.medicinebackend.JWT.AuthTokensGenerator;
 import com.example.medicinebackend.Params.OAuthLoginParams;
 import com.example.medicinebackend.Repository.MemberRepository;
+import com.example.medicinebackend.Response.MemberResponseDto;
 import com.example.medicinebackend.Response.OAuthInfoResponse;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,16 @@ public class SocialLoginService {
                 .profileImageUrl(oAuthInfoResponse.getProfileImage())
                 .build();
         return memberRepository.save(member).getMemberId();
+    }
+
+    public MemberResponseDto getMemberInfo(Long memberId){
+//        Member memberInfo = memberRepository.findByMemberId(memberId);
+        MemberResponseDto memberResponseDto = new MemberResponseDto();
+        String nickname = memberRepository.findNicknameByMemberId(memberId);
+        memberResponseDto.setNickname(nickname);
+        memberResponseDto.setProfileImage(memberRepository.findProfileImageUrlByMemberId(memberId));
+
+        return memberResponseDto;
     }
 
 

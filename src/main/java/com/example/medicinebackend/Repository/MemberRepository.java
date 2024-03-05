@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface MemberRepository extends JpaRepository<Member,Long> {
     Optional<Member> findByNickname(String nickname);
     Member findByMemberId(Long memberId);
+    @Query("SELECT nickname FROM Member WHERE memberId = :memberId")
+    String findNicknameByMemberId(@Param("memberId") Long memberId);
+
+    @Query("SELECT profileImageUrl FROM Member WHERE memberId = :memberId")
+    String findProfileImageUrlByMemberId(@Param("memberId")Long memberId);
 
     @Query("SELECT memberId FROM Member WHERE nickname = :nickname")
     Optional<Member> findMemberIdByNickname(@Param("nickname") String nickname);
