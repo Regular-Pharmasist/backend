@@ -36,8 +36,8 @@ public interface OpenFeignClient {
 
     @GetMapping("/DrbEasyDrugInfoService/getDrbEasyDrugList")
     GeneralMedicineResponse getMedicineData(@RequestParam("serviceKey") String serviceKey,
-                                            @RequestParam("type") String type
-    );
+                                            @RequestParam("type") String type,
+                                            @RequestParam("itemName") String itemName);
 
 
 }
