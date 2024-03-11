@@ -10,6 +10,7 @@ import com.example.medicinebackend.Repository.MedicineRepository;
 import com.example.medicinebackend.Repository.MedicineUsageRepository;
 import com.example.medicinebackend.Response.ApiResponse.MedicineData;
 import com.example.medicinebackend.Response.GeneralMedicineResponse;
+import com.example.medicinebackend.Response.MedicineRecordResponseDto;
 import com.example.medicinebackend.Response.MedicineResponseDto;
 import com.example.medicinebackend.Response.PermittedDataResponse;
 import com.example.medicinebackend.Response.RiskDataResponse;
@@ -32,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OpenFeignService {
     private final OpenFeignClient feignClient;
     private final MedicineRepository medicineRepository;
+    private final MedicineUsageRepository medicineUsageRepository;
 
     @Value("${api.serviceKey}")
     private String serviceKey;
@@ -171,6 +173,27 @@ public class OpenFeignService {
     }
 
 
+    public List<MedicineRecordResponseDto> getMedicineRecord(Long memberId) {
+        List<MedicineRecordResponseDto> medicineRecordResponseDtos = new ArrayList<>();
+        List<MedicineUsage> medicines = medicineUsageRepository.findByMemberId(memberId);
+        for(MedicineUsage item : medicines){
+            MedicineRecordResponseDto medicineRecordResponseDto = new MedicineRecordResponseDto();
+
+            Medicine medicine = item.getMedicineId();
+            medicineRecordResponseDto.setItemName(medicine.getItemName());
+            medicineRecordResponseDto.setIsActive(item.getIsActive());
+            medicineRecordResponseDto.setStartDate(item.getStartDate());
+            medicineRecordResponseDto.setEndDate(item.getEndDate());
+            medicineRecordResponseDto.setDailyFrequency(item.getDailyFrequency());
+            medicineRecordResponseDto.setImage(medicine.getImage());
+            medicineRecordResponseDto.setTypeName(medicine.getTypeName());
+
+            medicineRecordResponseDtos.add(medicineRecordResponseDto);
+        }
+
+        return medicineRecordResponseDtos;
+
+    }
 }
 
 
