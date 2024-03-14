@@ -52,14 +52,18 @@ public class OpenFeignService {
         List<MedicineResponseDto> riskData = getRiskMedicineDataByName(productName);
         List<MedicineResponseDto> generalMedicineData = getGeneralMedicineData(productName);
 
-        if (!generalMedicineData.isEmpty()) {
-            saveMedicineData(generalMedicineData);
-            return generalMedicineData;
-        }
-        else if (!riskData.isEmpty()) {
+        if (!riskData.isEmpty()) {
             saveMedicineData(riskData);
             return riskData;
         }
+        else if (!generalMedicineData.isEmpty()) {
+            saveMedicineData(generalMedicineData);
+            return generalMedicineData;
+        }
+//        else if (!riskData.isEmpty()) {
+//            saveMedicineData(riskData);
+//            return riskData;
+//        }
 
         return emptyList();
     }
@@ -193,6 +197,21 @@ public class OpenFeignService {
 
         return medicineRecordResponseDtos;
 
+    }
+
+    public MedicineResponseDto getSpecificMedicine(String medicineName) {
+        List<Medicine> medicines = medicineRepository.findByItemName(medicineName);
+        MedicineResponseDto  medicineResponseDtos = new MedicineResponseDto();
+        for(Medicine medicine : medicines){
+            medicineResponseDtos.setItemName(medicine.getItemName());
+            medicineResponseDtos.setItemCode(medicine.getItemCode());
+            medicineResponseDtos.setEfficiency(medicine.getEfficiency());
+            medicineResponseDtos.setSideEffect(medicine.getSideEffect());
+            medicineResponseDtos.setWarn(medicine.getWarn());
+            medicineResponseDtos.setMaterial(medicine.getMaterial());
+            medicineResponseDtos.setImage(medicine.getItemName());
+        }
+        return medicineResponseDtos;
     }
 }
 

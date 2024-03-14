@@ -9,6 +9,7 @@ import com.example.medicinebackend.Service.OpenFeignService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +40,11 @@ public class FeignController {
         String token = tokenHeader.substring(7);
         Long memberId = authTokensGenerator.extractMemberId(token);
         return openFeignService.getMedicineRecord(memberId);
+    }
+
+    @GetMapping("/record/{medicineName}")
+    public MedicineResponseDto getSpecificMedicineData(@PathVariable String medicineName){
+       return openFeignService.getSpecificMedicine(medicineName);
     }
 
 
