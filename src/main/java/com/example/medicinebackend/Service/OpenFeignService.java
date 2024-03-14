@@ -10,6 +10,7 @@ import com.example.medicinebackend.Repository.MedicineRepository;
 import com.example.medicinebackend.Repository.MedicineUsageRepository;
 import com.example.medicinebackend.Response.ApiResponse.MedicineData;
 import com.example.medicinebackend.Response.GeneralMedicineResponse;
+import com.example.medicinebackend.Response.MedicineRecordResponseDto;
 import com.example.medicinebackend.Response.MedicineResponseDto;
 import com.example.medicinebackend.Response.PermittedDataResponse;
 import com.example.medicinebackend.Response.RiskDataResponse;
@@ -32,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OpenFeignService {
     private final OpenFeignClient feignClient;
     private final MedicineRepository medicineRepository;
+    private final MedicineUsageRepository medicineUsageRepository;
 
     @Value("${api.serviceKey}")
     private String serviceKey;
@@ -50,14 +52,18 @@ public class OpenFeignService {
         List<MedicineResponseDto> riskData = getRiskMedicineDataByName(productName);
         List<MedicineResponseDto> generalMedicineData = getGeneralMedicineData(productName);
 
-        if (!generalMedicineData.isEmpty()) {
-            saveMedicineData(generalMedicineData);
-            return generalMedicineData;
-        }
-        else if (!riskData.isEmpty()) {
+        if (!riskData.isEmpty()) {
             saveMedicineData(riskData);
             return riskData;
         }
+        else if (!generalMedicineData.isEmpty()) {
+            saveMedicineData(generalMedicineData);
+            return generalMedicineData;
+        }
+//        else if (!riskData.isEmpty()) {
+//            saveMedicineData(riskData);
+//            return riskData;
+//        }
 
         return emptyList();
     }
@@ -171,6 +177,42 @@ public class OpenFeignService {
     }
 
 
+    public List<MedicineRecordResponseDto> getMedicineRecord(Long memberId) {
+        List<MedicineRecordResponseDto> medicineRecordResponseDtos = new ArrayList<>();
+        List<MedicineUsage> medicines = medicineUsageRepository.findByMemberId(memberId);
+        for(MedicineUsage item : medicines){
+            MedicineRecordResponseDto medicineRecordResponseDto = new MedicineRecordResponseDto();
+
+            Medicine medicine = item.getMedicineId();
+            medicineRecordResponseDto.setItemName(medicine.getItemName());
+            medicineRecordResponseDto.setIsActive(item.getIsActive());
+            medicineRecordResponseDto.setStartDate(item.getStartDate());
+            medicineRecordResponseDto.setEndDate(item.getEndDate());
+            medicineRecordResponseDto.setDailyFrequency(item.getDailyFrequency());
+            medicineRecordResponseDto.setImage(medicine.getImage());
+            medicineRecordResponseDto.setTypeName(medicine.getTypeName());
+
+            medicineRecordResponseDtos.add(medicineRecordResponseDto);
+        }
+
+        return medicineRecordResponseDtos;
+
+    }
+
+    public MedicineResponseDto getSpecificMedicine(String medicineName) {
+        List<Medicine> medicines = medicineRepository.findByItemName(medicineName);
+        MedicineResponseDto  medicineResponseDtos = new MedicineResponseDto();
+        for(Medicine medicine : medicines){
+            medicineResponseDtos.setItemName(medicine.getItemName());
+            medicineResponseDtos.setItemCode(medicine.getItemCode());
+            medicineResponseDtos.setEfficiency(medicine.getEfficiency());
+            medicineResponseDtos.setSideEffect(medicine.getSideEffect());
+            medicineResponseDtos.setWarn(medicine.getWarn());
+            medicineResponseDtos.setMaterial(medicine.getMaterial());
+            medicineResponseDtos.setImage(medicine.getItemName());
+        }
+        return medicineResponseDtos;
+    }
 }
 
 
